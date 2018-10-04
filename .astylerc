@@ -1,0 +1,10 @@
+style=kr
+break-blocks
+pad-oper
+pad-paren-in
+align-pointer=name
+remove-braces
+attach-return-type
+remove-comment-prefix
+max-code-length=80
+mode=c

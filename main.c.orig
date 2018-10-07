@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
 
-const char *WINDOW_NAME = "Sea Quiz";
+const char* WINDOW_NAME = "Sea Quiz";
 
 struct Question {
     char *question; /* ptr to header, do not free */
@@ -55,15 +55,15 @@ static void activate(GtkApplication *app,
                      gpointer        user_data)
 {
     GtkWidget *window;
-    GtkWidget *label;
+	GtkWidget *label;
 
     window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(window), WINDOW_NAME);
-    gtk_window_set_default_size(GTK_WINDOW(window), 400, 200);
-
-    label = gtk_label_new("No quiz file loaded.\nPlease specify in command line arguments.");
-    gtk_container_add(GTK_CONTAINER(window), label);
-
+    gtk_window_set_default_size(GTK_WINDOW(window), 200, 200);
+	
+	label = gtk_label_new("No quiz file loaded, please specify in command line arguments.");
+	gtk_container_add (GTK_CONTAINER (window), label);
+	
     gtk_widget_show_all(window);
 }
 
@@ -115,7 +115,7 @@ static void open(GApplication *application,
                  gchar        *hint,
                  gpointer      user_data)
 {
-    printf("%s\n", hint);
+	printf("%s\n",hint);
     printf("%d\n", n_files);
 }
 

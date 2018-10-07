@@ -1,7 +1,7 @@
 style=kr
 break-blocks
 pad-oper
-pad-paren-in
+unpad-paren
 align-pointer=name
 remove-braces
 attach-return-type

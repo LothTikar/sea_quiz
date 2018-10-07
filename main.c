@@ -1,8 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <gtk/gtk.h>
 
 const char *WINDOW_NAME = "Sea Quiz";
+
+int num_items;
+struct Item *items;
+
+int header_size;
+char **header; /* only copy of header, do not free until program completion */
 
 struct Question {
     char *question; /* ptr to header, do not free */
@@ -45,11 +52,23 @@ void free_item_contents(struct Item item)
     free_ptr_array(item.num_images, (void **)item.images);
 }
 
-int num_items;
-struct Item *items;
+void free_items()
+{
+    int i;
 
-int header_size;
-char **header; /* only copy of header, do not free until program completion */
+    if(items != NULL) {
+        for(i = 0; i < num_items; ++i)
+            free_item_contents(items[i]);
+
+        free(items);
+    }
+}
+
+void free_global_ptrs(void)
+{
+    free_ptr_array(header_size, (void **)header);
+    free_items();
+}
 
 static void activate(GtkApplication *app,
                      gpointer        user_data)
@@ -81,24 +100,6 @@ static void activate(GtkApplication *app,
 	search directory of csv file for all names that begin with image prefix
 */
 
-void free_items()
-{
-    int i;
-
-    if(items != NULL) {
-        for(i = 0; i < num_items; ++i)
-            free_item_contents(items[i]);
-
-        free(items);
-    }
-}
-
-void free_global_ptrs(void)
-{
-    free_ptr_array(header_size, (void **)header);
-    free_items();
-}
-
 /*  function to process csv file
 
 	create header listing
@@ -109,14 +110,44 @@ void free_global_ptrs(void)
 	have luster but minerals do
 */
 
-static void open(GApplication *application,
+static void open(GtkApplication *app,
                  gpointer      files,
                  gint          n_files,
                  gchar        *hint,
                  gpointer      user_data)
 {
-    printf("%s\n", hint);
-    printf("%d\n", n_files);
+    char hint_text[100];
+    char num_files_text[100];
+
+    GtkWidget *window;
+    GtkWidget *hint_label;
+    GtkWidget *n_files_label;
+    GtkWidget *flowbox;
+
+    strcpy(hint_text, "hint: ");
+    strcat(hint_text, hint);
+
+    strcpy(num_files_text, "Number of files to open: ");
+    sprintf(&num_files_text[strlen(num_files_text)], "%d", n_files);
+
+    window = gtk_application_window_new(app);
+    gtk_window_set_title(GTK_WINDOW(window), WINDOW_NAME);
+    gtk_window_set_default_size(GTK_WINDOW(window), 400, 400);
+
+    flowbox = gtk_flow_box_new();
+    gtk_flow_box_set_selection_mode(GTK_FLOW_BOX(flowbox), GTK_SELECTION_NONE);
+    gtk_orientable_set_orientation(GTK_ORIENTABLE(flowbox),
+                                   GTK_ORIENTATION_VERTICAL);
+
+    hint_label = gtk_label_new(hint_text);
+    gtk_container_add(GTK_CONTAINER(flowbox), hint_label);
+
+    n_files_label = gtk_label_new(num_files_text);
+    gtk_container_add(GTK_CONTAINER(flowbox), n_files_label);
+
+    gtk_container_add(GTK_CONTAINER(window), flowbox);
+
+    gtk_widget_show_all(window);
 }
 
 int main(int    argc,

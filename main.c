@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <gtk/gtk.h>
+#include <gio/gio.h>
 
 const char *WINDOW_NAME = "Sea Quiz";
 
@@ -116,16 +117,16 @@ static void open(GtkApplication *app,
                  gchar        *hint,
                  gpointer      user_data)
 {
-    char hint_text[100];
     char num_files_text[100];
+    GFile* quiz_file;
 
     GtkWidget *window;
     GtkWidget *hint_label;
     GtkWidget *n_files_label;
+    GtkWidget *filename_label;
     GtkWidget *flowbox;
-
-    strcpy(hint_text, "hint: ");
-    strcat(hint_text, hint);
+    
+    quiz_file = ((GFile**)files)[0];
 
     strcpy(num_files_text, "Number of files to open: ");
     sprintf(&num_files_text[strlen(num_files_text)], "%d", n_files);
@@ -139,11 +140,11 @@ static void open(GtkApplication *app,
     gtk_orientable_set_orientation(GTK_ORIENTABLE(flowbox),
                                    GTK_ORIENTATION_VERTICAL);
 
-    hint_label = gtk_label_new(hint_text);
-    gtk_container_add(GTK_CONTAINER(flowbox), hint_label);
-
     n_files_label = gtk_label_new(num_files_text);
     gtk_container_add(GTK_CONTAINER(flowbox), n_files_label);
+    
+    filename_label = gtk_label_new(g_file_get_basename(quiz_file));
+    gtk_container_add(GTK_CONTAINER(flowbox), filename_label);
 
     gtk_container_add(GTK_CONTAINER(window), flowbox);
 

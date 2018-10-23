@@ -29,6 +29,7 @@
 *.dylib
 
 # Executables
+sea_quiz
 *.exe
 *.out
 *.app
